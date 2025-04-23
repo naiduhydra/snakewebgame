@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Snake Game</title>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-family: Arial, sans-serif;
+      background: #f0f0f0;
+    }
+    canvas {
+      background-color: #111;
+      margin-top: 20px;
+    }
+    .score-board {
+      display: flex;
+      justify-content: space-between;
+      width: 320px;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    .controls {
+      display: grid;
+      grid-template-columns: 50px 50px 50px;
+      grid-template-rows: 50px 50px 50px;
+      gap: 5px;
+      margin-top: 10px;
+    }
+    .btn {
+      background: #444;
+      color: white;
+      font-size: 18px;
+      border: none;
+      cursor: pointer;
+      border-radius: 8px;
+    }
+    .btn:hover {
+      background: #666;
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="gameCanvas" width="300" height="300"></canvas>
+
+<div class="score-board">
+  <div>Score: <span id="score">0</span></div>
+  <div>High Score: <span id="highScore">0</span></div>
+</div>
+
+<div class="controls">
+  <div></div>
+  <button class="btn" id="upBtn">↑</button>
+  <div></div>
+  <button class="btn" id="leftBtn">←</button>
+  <div></div>
+  <button class="btn" id="rightBtn">→</button>
+  <div></div>
+  <button class="btn" id="downBtn">↓</button>
+  <div></div>
+</div>
+
+<script>
+  const canvas = document.getElementById("gameCanvas");
+  const ctx = canvas.getContext("2d");
+
+  const gridSize = 20;
+  const tileCount = canvas.width / gridSize;
+
+  let snake = [
+    { x: 0, y: 0 },
+    { x: 1, y: 0 },
+    { x: 2, y: 0 }
+  ];
+
+  let direction = { x: 1, y: 0 }; // moving right
+  let food = spawnFood();
+  let score = 0;
+  let highScore = localStorage.getItem("highScore") || 0;
+
+  document.getElementById("score").innerText = score;
+  document.getElementById("highScore").innerText = highScore;
+
+  function spawnFood() {
+    let newFood;
+    while (true) {
+      newFood = {
+        x: Math.floor(Math.random() * tileCount),
+        y: Math.floor(Math.random() * tileCount)
+      };
+      if (!snake.some(segment => segment.x === newFood.x && segment.y === newFood.y)) {
+        return newFood;
+      }
+    }
+  }
+
+  function update() {
+    const head = { x: snake[snake.length - 1].x + direction.x, y: snake[snake.length - 1].y + direction.y };
+
+    if (
+      head.x < 0 || head.x >= tileCount ||
+      head.y < 0 || head.y >= tileCount ||
+      snake.some(segment => segment.x === head.x && segment.y === head.y)
+    ) {
+      alert("Game Over!");
+      if (score > highScore) {
+        highScore = score;
+        localStorage.setItem("highScore", highScore);
+      }
+      score = 0;
+      snake = [
+        { x: 0, y: 0 },
+        { x: 1, y: 0 },
+        { x: 2, y: 0 }
+      ];
+      direction = { x: 1, y: 0 };
+      food = spawnFood();
+      document.getElementById("score").innerText = score;
+      document.getElementById("highScore").innerText = highScore;
+      draw();
+      return;
+    }
+
+    snake.push(head);
+
+    if (head.x === food.x && head.y === food.y) {
+      score++;
+      document.getElementById("score").innerText = score;
+      food = spawnFood();
+    } else {
+      snake.shift();
+    }
+
+    draw();
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Draw snake
+    ctx.fillStyle = "lime";
+    snake.forEach(part => {
+      ctx.fillRect(part.x * gridSize, part.y * gridSize, gridSize, gridSize);
+    });
+
+    // Draw food
+    ctx.fillStyle = "red";
+    ctx.fillRect(food.x * gridSize, food.y * gridSize, gridSize, gridSize);
+  }
+
+  // Movement control
+  document.addEventListener("keydown", e => {
+    if (e.key === "ArrowUp" && direction.y === 0) direction = { x: 0, y: -1 };
+    if (e.key === "ArrowDown" && direction.y === 0) direction = { x: 0, y: 1 };
+    if (e.key === "ArrowLeft" && direction.x === 0) direction = { x: -1, y: 0 };
+    if (e.key === "ArrowRight" && direction.x === 0) direction = { x: 1, y: 0 };
+  });
+
+  document.getElementById("upBtn").onclick = () => { if (direction.y === 0) direction = { x: 0, y: -1 }; };
+  document.getElementById("downBtn").onclick = () => { if (direction.y === 0) direction = { x: 0, y: 1 }; };
+  document.getElementById("leftBtn").onclick = () => { if (direction.x === 0) direction = { x: -1, y: 0 }; };
+  document.getElementById("rightBtn").onclick = () => { if (direction.x === 0) direction = { x: 1, y: 0 }; };
+
+  draw(); // Draw initial frame
+  setInterval(update, 200); // Speed of snake
+</script>
+<footer style="margin-top: 30px; text-align: center; font-weight: bold;">
+    Developed by <span style="color: #007acc;">Naidu Hydra</span>
+    <a href="https://github.com/naiduhydra" target="_blank" style="color: #333; text-decoration: none;">
+    </a>
+  </footer>
+  
+</body>
+</html>
