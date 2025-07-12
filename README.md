@@ -45,3 +45,8 @@ snakewebgame/
 1. Clone this repository:
    ```bash
    git clone https://github.com/naiduhydra/snakewebgame.git
+
+
+---
+
+Let me know if you want me to generate a matching `LICENSE` file or enhance the UI of your game.
