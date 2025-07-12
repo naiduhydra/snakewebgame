@@ -22,3 +22,26 @@ Play the game here:
 
 ## 📁 Folder Structure
 
+snakewebgame/
+├── index.html
+├── style.css
+└── script.js
+
+
+## ✨ Features
+
+- Real-time gameplay
+- Score tracking
+- Game over detection
+- Responsive key handling
+- Simple and clean UI
+
+## 📸 Screenshots
+
+*(You can add a screenshot here of your game UI)*
+
+## 🚀 How to Run Locally
+
+1. Clone this repository:
+   ```bash
+   git clone https://github.com/naiduhydra/snakewebgame.git
